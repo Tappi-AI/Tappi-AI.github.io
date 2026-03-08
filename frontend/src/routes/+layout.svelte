@@ -6,6 +6,10 @@
 </script>
 
 <main class="min-h-screen flex flex-col bg-gray-900 text-gray-100">
+	<nav class="flex items-center gap-4 border-b border-gray-800 px-6 py-3">
+		<a href="/" class="text-sm text-gray-400 hover:text-white transition">Home</a>
+		<a href="/calendar" class="text-sm text-gray-400 hover:text-white transition">Calendar</a>
+	</nav>
 	<div class="flex-1">
 		{@render children?.()}
 	</div>

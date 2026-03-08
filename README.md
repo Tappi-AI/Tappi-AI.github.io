@@ -1,4 +1,4 @@
-# claude-bot-svelte
+# tappi-ai.github.io
 
 A Svelte + SvelteKit starter template with built-in AI-assisted development. Designed for people who want to describe what they want and let AI build it.
 

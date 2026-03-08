@@ -239,8 +239,9 @@ def main():
             cmd_status(page, url)
 
         elif command == "screenshot":
-            name = sys.argv[2] if len(sys.argv) > 2 else None
-            cmd_screenshot(page, BASE_URL, name)
+            url = sys.argv[2] if len(sys.argv) > 2 else BASE_URL
+            name = sys.argv[3] if len(sys.argv) > 3 else None
+            cmd_screenshot(page, url, name)
 
         elif command == "click":
             if len(sys.argv) < 3:

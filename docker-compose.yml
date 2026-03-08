@@ -1,0 +1,23 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - ./frontend/:/app/
+    command: npm run dev
+    tty: true
+    stdin_open: true
+
+  browser:
+    profiles:
+      - browser
+    build:
+      context: ./browser
+    volumes:
+      - ./.browser:/output
+    environment:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+    tty: true
+    stdin_open: true

@@ -20,18 +20,30 @@
 	let view = $state<'day' | 'week'>('day');
 	let allData: Record<string, CalendarDay> = $state({});
 
-	function getDay(date: Date): CalendarDay {
+	function ensureDay(date: Date): void {
 		const key = formatDate(date);
 		if (!allData[key]) {
 			allData[key] = createDay(date);
 		}
-		return allData[key];
+	}
+
+	function getDay(date: Date): CalendarDay {
+		const key = formatDate(date);
+		return allData[key] ?? createDay(date);
 	}
 
 	function persist() {
 		allData = { ...allData };
 		saveCalendarData(allData);
 	}
+
+	// Ensure days exist reactively, not during render
+	$effect(() => {
+		ensureDay(today);
+		if (view === 'week') {
+			getWeekDates(weekStart).forEach((d) => ensureDay(d));
+		}
+	});
 
 	function prevDay() {
 		today = addDays(today, view === 'week' ? -7 : -1);

@@ -12,6 +12,7 @@
 		<a href="/inspire" class="text-sm text-gray-400 hover:text-white transition">Inspire</a>
 		<a href="/Moment" class="text-sm text-gray-400 hover:text-white transition">Moments</a>
 		<a href="/Energy" class="text-sm text-gray-400 hover:text-white transition">Energy</a>
+		<a href="/Focus" class="text-sm text-gray-400 hover:text-white transition">Focus</a>
 	</nav>
 	<div class="flex-1">
 		{@render children?.()}

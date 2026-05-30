@@ -3,7 +3,7 @@
 <script lang="ts">
 	import { authStore, logout } from '$lib/stores/auth.store';
 	import { loginPassword, fetchLoginConfig } from '$lib/backend/auth';
-	import { saveEnergyEntry } from '$lib/backend/energy';
+	import { saveEnergyEntry, resetEnergySetup } from '$lib/backend/energy';
 	import { generateRandomString, generateCodeChallenge } from '$lib/auth/pkce';
 	import type { LoginInfo } from '$lib/types/auth';
 
@@ -148,6 +148,7 @@
 	}
 
 	function handleLogout() {
+		resetEnergySetup();
 		logout();
 	}
 

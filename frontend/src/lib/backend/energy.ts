@@ -11,6 +11,58 @@ function getHeaders(): Record<string, string> {
 	};
 }
 
+let workspaceId: string | null = null;
+let initialized = false;
+
+async function ensureSetup(): Promise<void> {
+	if (initialized) return;
+
+	const headers = getHeaders();
+
+	// Find or create workspace
+	const wsRes = await fetch(`${BACKEND_URL}/api/v1/workspaces`, { headers });
+	if (!wsRes.ok) throw new Error('Failed to fetch workspaces');
+	const workspaces = await wsRes.json();
+
+	if (workspaces.length > 0) {
+		workspaceId = workspaces[0].workspace_id;
+	} else {
+		const createWs = await fetch(`${BACKEND_URL}/api/v1/workspaces`, {
+			method: 'POST',
+			headers,
+			body: JSON.stringify({ workspace_name: 'Tappi' })
+		});
+		if (!createWs.ok) throw new Error('Failed to create workspace');
+		const ws = await createWs.json();
+		workspaceId = ws.workspace_id;
+	}
+
+	// Check if energy table exists
+	const tablesRes = await fetch(`${BACKEND_URL}/api/v1/tables`, { headers });
+	if (!tablesRes.ok) throw new Error('Failed to fetch tables');
+	const tables = await tablesRes.json();
+	const hasEnergy = tables.some((t: { table_id: string }) => t.table_id === 'energy');
+
+	if (!hasEnergy) {
+		const createTable = await fetch(`${BACKEND_URL}/api/v1/tables`, {
+			method: 'POST',
+			headers,
+			body: JSON.stringify({ table_id: 'energy', workspace_id: workspaceId })
+		});
+		if (!createTable.ok) {
+			const err = await createTable.json().catch(() => ({ detail: 'Failed' }));
+			throw new Error(err.detail || 'Failed to create energy table');
+		}
+	}
+
+	initialized = true;
+}
+
+export function resetEnergySetup(): void {
+	initialized = false;
+	workspaceId = null;
+}
+
 export interface EnergyEntry {
 	activity: string;
 	timestamp: number;
@@ -22,6 +74,7 @@ export interface EnergyEntry {
 }
 
 export async function saveEnergyEntry(entry: EnergyEntry): Promise<void> {
+	await ensureSetup();
 	const response = await fetch(`${BACKEND_URL}/api/v1/tables/energy/rows`, {
 		method: 'POST',
 		headers: getHeaders(),
@@ -34,6 +87,7 @@ export async function saveEnergyEntry(entry: EnergyEntry): Promise<void> {
 }
 
 export async function loadEnergyEntries(): Promise<EnergyEntry[]> {
+	await ensureSetup();
 	const response = await fetch(
 		`${BACKEND_URL}/api/v1/tables/energy/rows?limit=100&sort=desc`,
 		{ headers: getHeaders() }

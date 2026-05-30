@@ -14,6 +14,7 @@ function getHeaders(): Record<string, string> {
 let workspaceId: string | null = null;
 let colMap: Record<string, string> = {};
 let initialized = false;
+let initPromise: Promise<void> | null = null;
 
 const NEEDED_COLS: { name: string; type: string }[] = [
 	{ name: 'Activity', type: 'text' },
@@ -23,6 +24,17 @@ const NEEDED_COLS: { name: string; type: string }[] = [
 ];
 
 async function ensureSetup(): Promise<void> {
+	if (initialized) return;
+	if (initPromise) return initPromise;
+	initPromise = doSetup();
+	try {
+		await initPromise;
+	} finally {
+		initPromise = null;
+	}
+}
+
+async function doSetup(): Promise<void> {
 	if (initialized) return;
 
 	const headers = getHeaders();

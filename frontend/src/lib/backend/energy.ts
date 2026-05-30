@@ -32,8 +32,9 @@ async function ensureSetup(): Promise<void> {
 	if (!wsRes.ok) throw new Error('Failed to fetch workspaces');
 	const workspaces = await wsRes.json();
 
-	if (workspaces.length > 0) {
-		workspaceId = workspaces[0].workspace_id;
+	const tappiWs = workspaces.find((w: { workspace_name: string }) => w.workspace_name === 'Tappi');
+	if (tappiWs) {
+		workspaceId = tappiWs.workspace_id;
 	} else {
 		const createWs = await fetch(`${BACKEND_URL}/api/v1/workspaces`, {
 			method: 'POST',
@@ -45,11 +46,14 @@ async function ensureSetup(): Promise<void> {
 		workspaceId = ws.workspace_id;
 	}
 
-	// Check if energy table exists
+	// Check if energy table exists in Tappi workspace
 	const tablesRes = await fetch(`${BACKEND_URL}/api/v1/tables`, { headers });
 	if (!tablesRes.ok) throw new Error('Failed to fetch tables');
 	const tables = await tablesRes.json();
-	const hasEnergy = tables.some((t: { table_id: string }) => t.table_id === 'energy');
+	const hasEnergy = tables.some(
+		(t: { table_id: string; workspace_id: string }) =>
+			t.table_id === 'energy' && t.workspace_id === workspaceId
+	);
 
 	if (!hasEnergy) {
 		const createTable = await fetch(`${BACKEND_URL}/api/v1/tables`, {

@@ -9,7 +9,7 @@ import { sveltekit } from '@sveltejs/kit/vite';
 
 const backendUrls = {
 	development: 'http://localhost:5000',
-	production: 'https://example.com'
+	production: 'https://tappi.ai'
 } as const;
 
 type BackendUrlMode = keyof typeof backendUrls;
@@ -21,7 +21,7 @@ export default defineConfig(({ mode }) => {
 	const isProduction = mode === 'production';
 
 	const allowedHosts =
-		safeMode === 'development' ? ['*', 'localhost', '127.0.0.1'] : ['example.com'];
+		safeMode === 'development' ? ['*', 'localhost', '127.0.0.1'] : ['tappi.ai'];
 
 	return {
 		base: isProduction ? projectBaseWithSlash : '/',

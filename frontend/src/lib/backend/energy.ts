@@ -68,30 +68,33 @@ async function ensureSetup(): Promise<void> {
 	}
 
 	// Fetch columns and ensure needed ones exist
-	const tableRes = await fetch(`${BACKEND_URL}/api/v1/tables/energy`, { headers });
+	let tableRes = await fetch(`${BACKEND_URL}/api/v1/tables/energy`, { headers });
 	if (!tableRes.ok) throw new Error('Failed to fetch energy table');
-	const table = await tableRes.json();
+	let table = await tableRes.json();
 
-	const existingCols: Record<string, string> = {};
-	for (const c of table.columns) {
-		existingCols[c.name] = c.column_id;
-	}
-
+	const existingNames = new Set(table.columns.map((c: { name: string }) => c.name));
+	let created = false;
 	for (const needed of NEEDED_COLS) {
-		if (!existingCols[needed.name]) {
-			const res = await fetch(`${BACKEND_URL}/api/v1/tables/energy/columns`, {
+		if (!existingNames.has(needed.name)) {
+			await fetch(`${BACKEND_URL}/api/v1/tables/energy/columns`, {
 				method: 'POST',
 				headers,
 				body: JSON.stringify({ name: needed.name, type: needed.type })
 			});
-			if (res.ok) {
-				const col = await res.json();
-				existingCols[col.name] = col.column_id;
-			}
+			created = true;
 		}
 	}
 
-	colMap = existingCols;
+	if (created) {
+		tableRes = await fetch(`${BACKEND_URL}/api/v1/tables/energy`, { headers });
+		if (!tableRes.ok) throw new Error('Failed to re-fetch energy table');
+		table = await tableRes.json();
+	}
+
+	colMap = {};
+	for (const c of table.columns) {
+		colMap[c.name] = c.column_id;
+	}
 	initialized = true;
 }
 

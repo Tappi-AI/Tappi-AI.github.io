@@ -8,8 +8,8 @@ import { defineConfig } from 'vitest/config';
 import { sveltekit } from '@sveltejs/kit/vite';
 
 const backendUrls = {
-	development: 'http://localhost:5000',
-	production: 'https://tappi.ai'
+	development: 'http://localhost:13491',
+	production: 'https://novasplit.ai'
 } as const;
 
 type BackendUrlMode = keyof typeof backendUrls;

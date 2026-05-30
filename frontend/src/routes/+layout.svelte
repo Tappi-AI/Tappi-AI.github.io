@@ -7,11 +7,10 @@
 
 <main class="min-h-screen flex flex-col bg-gray-900 text-gray-100">
 	<nav class="flex items-center gap-4 border-b border-gray-800 px-6 py-3">
-		<a href="/" class="text-sm text-gray-400 hover:text-white transition">Home</a>
+		<a href="/" class="text-sm text-gray-400 hover:text-white transition">Energy</a>
 		<a href="/calendar" class="text-sm text-gray-400 hover:text-white transition">Calendar</a>
 		<a href="/inspire" class="text-sm text-gray-400 hover:text-white transition">Inspire</a>
 		<a href="/Moment" class="text-sm text-gray-400 hover:text-white transition">Moments</a>
-		<a href="/Energy" class="text-sm text-gray-400 hover:text-white transition">Energy</a>
 		<a href="/Focus" class="text-sm text-gray-400 hover:text-white transition">Focus</a>
 		<a href="/Focus2" class="text-sm text-gray-400 hover:text-white transition">Focus2</a>
 	</nav>
@@ -20,14 +19,13 @@
 	</div>
 
 	<footer class="py-6 text-center text-sm text-gray-400">
-		💡 source code:
 		<a
 			class="underline hover:no-underline"
-			href="https://github.com/namechecker/namechecker.github.io"
+			href="https://github.com/Tappi-AI/Tappi-AI.github.io"
 			target="_blank"
 			rel="noreferrer"
 		>
-			https://github.com/namechecker/namechecker.github.io
+			Tappi
 		</a>
 	</footer>
 </main>

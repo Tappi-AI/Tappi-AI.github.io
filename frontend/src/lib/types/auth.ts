@@ -1,0 +1,18 @@
+export type AuthProvider = 'google' | 'none';
+
+export interface UserInfo {
+	sub: string;
+	email?: string;
+	name?: string;
+	picture?: string;
+}
+
+export interface LoginInfo {
+	provider: AuthProvider;
+	accessToken: string;
+	refreshToken?: string;
+	idToken?: string;
+	expiresAt?: number;
+	userInfo?: UserInfo;
+	role?: string;
+}

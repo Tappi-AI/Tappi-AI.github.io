@@ -12,7 +12,15 @@ function getHeaders(): Record<string, string> {
 }
 
 let workspaceId: string | null = null;
+let colMap: Record<string, string> = {};
 let initialized = false;
+
+const NEEDED_COLS: { name: string; type: string }[] = [
+	{ name: 'Activity', type: 'text' },
+	{ name: 'Mood', type: 'text' },
+	{ name: 'Duration', type: 'text' },
+	{ name: 'Energy', type: 'number' }
+];
 
 async function ensureSetup(): Promise<void> {
 	if (initialized) return;
@@ -55,12 +63,38 @@ async function ensureSetup(): Promise<void> {
 		}
 	}
 
+	// Fetch columns and ensure needed ones exist
+	const tableRes = await fetch(`${BACKEND_URL}/api/v1/tables/energy`, { headers });
+	if (!tableRes.ok) throw new Error('Failed to fetch energy table');
+	const table = await tableRes.json();
+
+	const existingCols: Record<string, string> = {};
+	for (const c of table.columns) {
+		existingCols[c.name] = c.column_id;
+	}
+
+	for (const needed of NEEDED_COLS) {
+		if (!existingCols[needed.name]) {
+			const res = await fetch(`${BACKEND_URL}/api/v1/tables/energy/columns`, {
+				method: 'POST',
+				headers,
+				body: JSON.stringify({ name: needed.name, type: needed.type })
+			});
+			if (res.ok) {
+				const col = await res.json();
+				existingCols[col.name] = col.column_id;
+			}
+		}
+	}
+
+	colMap = existingCols;
 	initialized = true;
 }
 
 export function resetEnergySetup(): void {
 	initialized = false;
 	workspaceId = null;
+	colMap = {};
 }
 
 export interface EnergyEntry {
@@ -75,10 +109,20 @@ export interface EnergyEntry {
 
 export async function saveEnergyEntry(entry: EnergyEntry): Promise<void> {
 	await ensureSetup();
+
+	const row_data: Record<string, string | number> = {};
+
+	if (colMap['Title']) row_data[colMap['Title']] = entry.activity;
+	if (colMap['Activity']) row_data[colMap['Activity']] = entry.activity;
+	if (colMap['Mood'])
+		row_data[colMap['Mood']] = (entry.emotion_emoji || '') + ' ' + (entry.emotion_label || '');
+	if (colMap['Duration']) row_data[colMap['Duration']] = entry.duration_label || '';
+	if (colMap['Energy']) row_data[colMap['Energy']] = entry.energy;
+
 	const response = await fetch(`${BACKEND_URL}/api/v1/tables/energy/rows`, {
 		method: 'POST',
 		headers: getHeaders(),
-		body: JSON.stringify({ row_data: entry })
+		body: JSON.stringify({ row_data })
 	});
 	if (!response.ok) {
 		const error = await response.json().catch(() => ({ detail: 'Save failed' }));
@@ -94,5 +138,17 @@ export async function loadEnergyEntries(): Promise<EnergyEntry[]> {
 	);
 	if (!response.ok) return [];
 	const rows = await response.json();
-	return rows.map((r: { row_data: EnergyEntry }) => r.row_data);
+
+	const actCol = colMap['Activity'] || colMap['Title'];
+	const moodCol = colMap['Mood'];
+	const durCol = colMap['Duration'];
+	const engCol = colMap['Energy'];
+
+	return rows.map((r: { row_data: Record<string, string | number> }) => ({
+		activity: r.row_data[actCol] || '',
+		timestamp: 0,
+		emotion_label: moodCol ? String(r.row_data[moodCol] || '') : '',
+		duration_label: durCol ? String(r.row_data[durCol] || '') : '',
+		energy: engCol ? Number(r.row_data[engCol] || 0) : 0
+	}));
 }

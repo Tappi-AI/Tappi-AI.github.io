@@ -1,0 +1,17 @@
+# Tappi AI
+
+> Tappi is a flexible, AI-assisted workspace: tables, docs, and views (table,
+> kanban, timeline) that adapt to the workflow you build on them. This site
+> demos Tappi through an ESG (Environmental, Social, Governance) supply-chain
+> traceability use case.
+
+## Site Structure
+
+- Home: /
+- About: /about/
+- ESG Demo: /esg-demo/
+
+## Discovery
+
+- /sitemap.xml — full list of all pages
+- /robots.txt — crawl policy

@@ -1,0 +1,30 @@
+title: Tappi AI
+description: >-
+  Tappi is a flexible, AI-assisted workspace — tables, docs, and views that
+  adapt to the workflow you build on them. This site demos Tappi through an
+  ESG supply-chain traceability use case.
+
+url: "https://tappi.ai"
+baseurl: ""
+repository: Tappi-AI/Tappi-AI.github.io
+
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+kramdown:
+  parse_block_html: true
+
+# Not part of the published site — build tooling and repo docs.
+exclude:
+  - Dockerfile
+  - Gemfile
+  - Gemfile.lock
+  - .dockerignore
+  - docker-compose.yml
+  - README.md
+  - CLAUDE.md
+  - vendor
+  - node_modules
+  - .claude
+  - .tmp

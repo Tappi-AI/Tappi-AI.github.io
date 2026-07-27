@@ -1,24 +1,16 @@
 services:
-  frontend:
+  site:
     build:
-      context: ./frontend
+      context: .
     ports:
-      - "127.0.0.1:3000:3000"
+      - "127.0.0.1:14001:4000"
     volumes:
-      - ./frontend/:/app/
-      - /app/node_modules
-    command: npm run dev
+      - ./:/site
+      - bundle_cache:/usr/local/bundle
+    command: >
+      bash -c "bundle install && bundle exec jekyll serve --host 0.0.0.0 --force_polling"
     tty: true
     stdin_open: true
 
-  browser:
-    profiles:
-      - browser
-    build:
-      context: ./browser
-    volumes:
-      - ./.browser:/output
-    environment:
-      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
-    tty: true
-    stdin_open: true
+volumes:
+  bundle_cache:

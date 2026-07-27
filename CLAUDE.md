@@ -2,35 +2,33 @@
 
 - Use `Skill(claude-bot)` for developing.
 
-# Browser Testing (Playwright via Docker)
+# Site
 
-Use the browser container to take screenshots and verify pages — both local dev and deployed site.
+Jekyll static site for tappi.ai. Source lives at the repo root (no `pages/`
+subfolder) — `index.md`, `about/`, `esg-demo/`, `_layouts/`, `_data/`,
+`assets/`. Demo content (ESG traceability data) is ported from the sibling
+`../esg-tappi` repo's demo UI — never copy real backend credentials from
+that repo into this one.
 
-## Setup
+No external CDNs or shared theme submodules — layout and CSS are
+self-contained in `_layouts/base.html` and `assets/css/main.css`.
+
+## Local development
+
 ```bash
-docker compose --profile browser up -d browser
+docker compose up site
 ```
 
-## Commands
-```bash
-# Screenshot local dev
-docker compose exec browser python browse.py screenshot http://frontend:3000
+Site runs at http://localhost:14001 with livereload.
 
-# Screenshot deployed site
-docker compose exec browser python browse.py screenshot https://tappi-ai.github.io
-docker compose exec browser python browse.py screenshot https://tappi-ai.github.io/calendar
+## Browser Testing
 
-# Check page status
-docker compose exec browser python browse.py status https://tappi-ai.github.io
-
-# List buttons
-docker compose exec browser python browse.py buttons
-```
-
-Screenshots are saved to `.browser/` directory — use `Read` tool to view them.
+Not currently wired up in this repo — use the `developing-debug-frontend`
+skill (Playwright via Docker) when visual verification is needed, instead of
+maintaining a bespoke `browser/` service here.
 
 # Deployment
 
-- GitHub Pages at: https://tappi-ai.github.io
+- GitHub Pages at: https://tappi-ai.github.io (custom domain: https://tappi.ai, via `CNAME`)
 - Repo: Tappi-AI/Tappi-AI.github.io
-- Auto-deploys on push to main via `.github/workflows/deploy.yml`
+- Auto-deploys on push to main via `.github/workflows/jekyll.yml`, which builds this repo's `Dockerfile` and publishes `_site/`.

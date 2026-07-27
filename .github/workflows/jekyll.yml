@@ -17,7 +17,7 @@ jobs:
       - name: Build Jekyll via Docker
         run: |
           docker build -t jekyll-build .
-          docker run --rm -v ${{ github.workspace }}:/site jekyll-build bash -c "bundle install && bundle exec jekyll build"
+          docker run --rm -v ${{ github.workspace }}:/site -w /site jekyll-build bash -c "cd /site && bundle install && bundle exec jekyll build"
       - name: Upload artifact
         uses: actions/upload-pages-artifact@main
         with:

@@ -13,18 +13,5 @@ services:
     tty: true
     stdin_open: true
 
-  browser:
-    profiles:
-      - browser
-    build:
-      context: ./browser
-    network_mode: host
-    volumes:
-      - ./.browser:/output
-    environment:
-      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
-    tty: true
-    stdin_open: true
-
 volumes:
   bundle_cache:

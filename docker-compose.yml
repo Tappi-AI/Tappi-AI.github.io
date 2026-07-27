@@ -2,6 +2,7 @@ services:
   site:
     build:
       context: .
+    working_dir: /site
     ports:
       - "127.0.0.1:14001:4000"
     volumes:
@@ -9,6 +10,19 @@ services:
       - bundle_cache:/usr/local/bundle
     command: >
       bash -c "bundle install && bundle exec jekyll serve --host 0.0.0.0 --force_polling"
+    tty: true
+    stdin_open: true
+
+  browser:
+    profiles:
+      - browser
+    build:
+      context: ./browser
+    network_mode: host
+    volumes:
+      - ./.browser:/output
+    environment:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
     tty: true
     stdin_open: true
 

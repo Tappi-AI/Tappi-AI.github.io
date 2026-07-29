@@ -16,11 +16,3 @@ export interface LoginInfo {
 	userInfo?: UserInfo;
 	role?: string;
 }
-
-export interface OAuthProviderConfig {
-	name: AuthProvider;
-	authorizeUrl: string;
-	clientId: string;
-	redirectUri: string;
-	scope: string;
-}

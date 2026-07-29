@@ -1,31 +1,31 @@
-<!--routes/+layout.svelte-->
-
 <script lang="ts">
 	import '../app.css';
+	import { goto } from '$app/navigation';
+	import { authStore, logout } from '$lib/stores/auth.store';
+	import { resetWellbeingTable } from '$lib/backend/wellbeingTable';
+
 	let { children } = $props();
+
+	function handleLogout() {
+		resetWellbeingTable();
+		logout();
+		goto('/login');
+	}
 </script>
 
-<main class="min-h-screen flex flex-col bg-gray-900 text-gray-100">
-	<nav class="flex items-center gap-4 border-b border-gray-800 px-6 py-3">
-		<a href="/" class="text-sm text-gray-400 hover:text-white transition">Energy</a>
-		<a href="/calendar" class="text-sm text-gray-400 hover:text-white transition">Calendar</a>
-		<a href="/inspire" class="text-sm text-gray-400 hover:text-white transition">Inspire</a>
-		<a href="/Moment" class="text-sm text-gray-400 hover:text-white transition">Moments</a>
-		<a href="/Focus" class="text-sm text-gray-400 hover:text-white transition">Focus</a>
-		<a href="/Focus2" class="text-sm text-gray-400 hover:text-white transition">Focus2</a>
-	</nav>
-	<div class="flex-1">
-		{@render children?.()}
+{#if $authStore?.role}
+	<div class="flex items-center justify-between border-b bg-white px-4 py-2">
+		<span class="text-lg font-semibold text-teal-700">Tappi</span>
+		<div class="flex items-center gap-3">
+			<span class="text-sm text-gray-600">{$authStore.userInfo?.name || $authStore.userInfo?.email || ''}</span>
+			<button
+				onclick={handleLogout}
+				class="rounded-lg bg-gray-100 px-3 py-1 text-sm text-gray-700 hover:bg-gray-200"
+			>
+				Sign out
+			</button>
+		</div>
 	</div>
+{/if}
 
-	<footer class="py-6 text-center text-sm text-gray-400">
-		<a
-			class="underline hover:no-underline"
-			href="https://github.com/Tappi-AI/Tappi-AI.github.io"
-			target="_blank"
-			rel="noreferrer"
-		>
-			Tappi
-		</a>
-	</footer>
-</main>
+{@render children()}

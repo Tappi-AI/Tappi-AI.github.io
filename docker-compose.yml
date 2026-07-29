@@ -11,6 +11,18 @@ services:
     tty: true
     stdin_open: true
 
+  mobile:
+    build:
+      context: ./mobile
+    ports:
+      - "127.0.0.1:3001:3000"
+    volumes:
+      - ./mobile/:/app/
+      - /app/node_modules
+    command: npm run dev
+    tty: true
+    stdin_open: true
+
   browser:
     profiles:
       - browser

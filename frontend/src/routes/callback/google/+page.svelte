@@ -1,80 +1,57 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
 	import { authStore } from '$lib/stores/auth.store';
-	import { exchangeCodeViaBackend, fetchMe } from '$lib/backend/auth';
+	import { handleOAuthCallback } from '$lib/auth/auth.service';
 
-	let error = $state('');
-	let processing = $state(true);
+	let error = '';
+	let loading = true;
 
-	$effect(() => {
-		const params = $page.url.searchParams;
-		const code = params.get('code');
-		const state = params.get('state');
-		const errorParam = params.get('error');
+	onMount(async () => {
+		try {
+			const params = new URLSearchParams(window.location.search);
+			const code = params.get('code');
+			const state = params.get('state');
+			const errorParam = params.get('error');
 
-		if (errorParam) {
-			error = errorParam;
-			processing = false;
-			return;
+			if (errorParam) {
+				throw new Error(errorParam);
+			}
+
+			if (!code || !state) {
+				throw new Error('Missing authorization response');
+			}
+
+			const loginInfo = await handleOAuthCallback('google', code, state);
+			authStore.set(loginInfo);
+			goto('/');
+		} catch (e) {
+			error = e instanceof Error ? e.message : 'Authentication failed';
+		} finally {
+			loading = false;
 		}
-
-		if (!code || !state) {
-			error = 'Missing authorization code';
-			processing = false;
-			return;
-		}
-
-		const savedState = sessionStorage.getItem('state_google');
-		const verifier = sessionStorage.getItem('pkce_google');
-
-		if (!verifier || state !== savedState) {
-			error = 'Invalid OAuth state';
-			processing = false;
-			return;
-		}
-
-		const redirectUri = `${window.location.origin}/callback/google`;
-
-		exchangeCodeViaBackend('google', code, redirectUri, verifier)
-			.then(async (tokens) => {
-				const me = await fetchMe(tokens.access_token);
-				sessionStorage.removeItem('pkce_google');
-				sessionStorage.removeItem('state_google');
-
-				authStore.set({
-					provider: 'google',
-					accessToken: tokens.access_token,
-					refreshToken: tokens.refresh_token,
-					idToken: tokens.id_token,
-					expiresAt: tokens.expires_in
-						? Math.floor(Date.now() / 1000) + tokens.expires_in
-						: undefined,
-					userInfo: {
-						sub: tokens.userinfo.sub,
-						email: tokens.userinfo.email,
-						name: tokens.userinfo.name,
-						picture: tokens.userinfo.picture
-					},
-					role: me?.role
-				});
-				goto('/');
-			})
-			.catch((err) => {
-				error = err instanceof Error ? err.message : 'Login failed';
-				processing = false;
-			});
 	});
 </script>
 
-<div class="min-h-[90vh] bg-gradient-to-br from-violet-500 via-purple-500 to-fuchsia-500 p-4 flex items-center justify-center">
-	<div class="bg-white rounded-3xl shadow-2xl p-8 max-w-sm w-full text-center">
-		{#if error}
-			<p class="text-red-500 mb-4">{error}</p>
-			<a href="/" class="text-purple-600 underline">Back to login</a>
-		{:else if processing}
-			<div class="inline-block h-12 w-12 animate-spin rounded-full border-4 border-purple-200 border-t-purple-600 mb-4"></div>
-			<p class="text-gray-600">Signing you in...</p>
+<div
+	class="flex min-h-screen items-center justify-center bg-linear-to-br from-emerald-600 via-teal-500 to-cyan-500 p-4"
+>
+	<div class="w-full max-w-md rounded-3xl bg-white p-8 text-center shadow-2xl">
+		{#if loading}
+			<div
+				class="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-4 border-teal-600"
+			></div>
+			<h2 class="text-xl font-semibold text-gray-800">Signing you in...</h2>
+			<p class="mt-2 text-gray-600">Please wait while we verify your account</p>
+		{:else if error}
+			<div class="mb-4 text-lg font-semibold text-red-600">Authentication Failed</div>
+			<p class="mb-6 text-gray-700">{error}</p>
+			<button
+				onclick={() => goto('/login')}
+				class="rounded-2xl bg-linear-to-r from-emerald-600 to-teal-500 px-6 py-3 font-semibold text-white transition hover:shadow-lg"
+			>
+				Back to Login
+			</button>
 		{/if}
 	</div>
 </div>

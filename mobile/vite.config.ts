@@ -8,7 +8,7 @@ import { defineConfig } from 'vitest/config';
 import { sveltekit } from '@sveltejs/kit/vite';
 
 // Dev goes through the vite proxy (same-origin /api) because the remote
-// LatticeCast only allows listed origins — localhost:3000 fails CORS preflight.
+// LatticeCast only allows listed origins — localhost fails CORS preflight.
 const backendUrls = {
 	development: '',
 	production: 'https://table.novasplit.ai'
@@ -24,8 +24,8 @@ export default defineConfig(({ mode }) => {
 
 	const allowedHosts =
 		safeMode === 'development'
-			? ['*', 'localhost', '127.0.0.1', 'frontend']
-			: ['tappi.ai', 'demo.tappi.ai'];
+			? ['*', 'localhost', '127.0.0.1', 'mobile']
+			: ['tappi.ai', 'm.tappi.ai'];
 
 	return {
 		base: isProduction ? projectBaseWithSlash : '/',

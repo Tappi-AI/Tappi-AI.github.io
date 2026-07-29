@@ -6,56 +6,77 @@ description: >-
   supply-chain path — one row per product, one table for the whole journey.
 ---
 
-<h1>ESG Goods Journey</h1>
+<div class="demo-note-lite">Sample data · a demonstration of the data model, not real supplier records</div>
 
-<p>Every row below is one product, tracked end to end in a single Tappi table:
-origin, certification documents, carbon footprint, and the supply-chain path
-it traveled to reach the shelf. No spreadsheet stitching, no separate PDF
-archive — it's all one table with a doc attached to each row.</p>
+<div class="wrap">
 
-<div class="card-grid">
-{% for item in site.data.esg_products %}
-<div class="product-card">
-  <div class="emoji">{{ item.emoji }}</div>
-  <h3>{{ item.name }}</h3>
-  <dl>
-    <dt>ISBN</dt>
-    <dd>{{ item.isbn }}</dd>
-    <dt>Origin</dt>
-    <dd>{{ item.origin }}</dd>
-    <dt>Date</dt>
-    <dd>{{ item.date }}</dd>
-    <dt>CO₂</dt>
-    <dd>{{ item.carbon_footprint }}</dd>
-  </dl>
-  <ul class="certs">
-    {% for cert in item.certifications %}<li>✓ {{ cert }}</li>{% endfor %}
-  </ul>
-  <ul class="path-steps">
-    {% for p in item.path %}<li>{{ p.emoji }} {{ p.step }}</li>{% endfor %}
-  </ul>
+  <div class="reveal">
+    <div class="eyebrow">ESG Demo · Goods Journey</div>
+    <h1>One table, the whole journey</h1>
+    <p class="lede">Every card below is one row: origin, certification
+    documents, carbon footprint, and the supply-chain path a product traveled
+    to reach the shelf. No spreadsheet stitching, no separate PDF archive.</p>
+  </div>
+
+  <div class="card-grid">
+  {%- for item in site.data.esg_products %}
+    <div class="product-card reveal">
+      <div class="emoji">{{ item.emoji }}</div>
+      <h3>{{ item.name }}</h3>
+      <dl>
+        <div class="row"><dt>ISBN</dt><dd class="mono">{{ item.isbn }}</dd></div>
+        <div class="row"><dt>Origin</dt><dd>{{ item.origin }}</dd></div>
+        <div class="row"><dt>Issued</dt><dd class="mono">{{ item.date }}</dd></div>
+        <div class="row"><dt>CO₂e</dt><dd class="carbon">{{ item.carbon_footprint }}</dd></div>
+      </dl>
+      <ul class="certs">
+      {%- for cert in item.certifications %}
+        <li>{{ cert }}</li>
+      {%- endfor %}
+      </ul>
+      <div class="path-title">Supply chain</div>
+      <ul class="path-steps">
+      {%- for p in item.path %}
+        <li>{{ p.emoji }} {{ p.step }}</li>
+      {%- endfor %}
+      </ul>
+    </div>
+  {%- endfor %}
+  </div>
+
+  <h2>Open a full product passport</h2>
+
+  <div class="card">
+    <div class="card-head">
+      <h2>Digital Product Passport</h2>
+      <span class="prov verified">Third-party verified</span>
+    </div>
+    <div class="card-body">
+      <p>A row's document can publish as its own shareable page — composition,
+      carbon journey, third-party compliance testing, care and provenance,
+      aligned to the EU ESPR (EU 2024/1781) textile data model.</p>
+      <div class="kv"><span class="k">English</span><span class="v"><a href="{{ '/esg-demo/passport-en/' | relative_url }}">Sample passport — 2022 Worlds Cropped Jacket</a></span></div>
+      <div class="kv"><span class="k">中文</span><span class="v"><a href="{{ '/esg-demo/passport-zh/' | relative_url }}">範例產品護照 — 短版立領外套</a></span></div>
+    </div>
+  </div>
+
+  <h2>How this maps to Tappi</h2>
+
+  <div class="card">
+    <div class="card-head"><h2>The underlying table</h2></div>
+    <div class="card-body">
+      <div class="kv"><span class="k">Table</span><span class="v mono">esg</span></div>
+      <div class="kv"><span class="k">Rows</span><span class="v">One per product</span></div>
+      <div class="kv"><span class="k">Columns</span><span class="v">Title, origin, date, footprint, certifications (tags), path</span></div>
+      <div class="kv"><span class="k">Doc</span><span class="v">Certification paperwork behind the tags</span></div>
+      <div class="kv"><span class="k">Views</span><span class="v">Table for the sustainability team, timeline for renewal dates</span></div>
+    </div>
+  </div>
+
+  <div class="disclosure demo-d">
+    <strong>Illustrative:</strong> the three products above are sample records
+    written to demonstrate the data model — not real suppliers or measured
+    data. The linked passports label their own data provenance individually.
+  </div>
+
 </div>
-{% endfor %}
-</div>
-
-<h2>See a full product passport</h2>
-
-<p>Each row's doc can render as its own shareable page — a full digital
-product passport, aligned to the EU ESPR textile data model, generated
-straight from the same table.</p>
-
-<p>
-  <a href="{{ '/esg-demo/passport-en/' | relative_url }}">View sample passport (English) →</a><br>
-  <a href="{{ '/esg-demo/passport-zh/' | relative_url }}">查看範例產品護照(中文)→</a>
-</p>
-
-<h2>How this maps to Tappi</h2>
-
-<ul>
-  <li><strong>Table</strong>: <code>esg</code> — one row per product.</li>
-  <li><strong>Columns</strong>: title, origin, date, carbon footprint, certifications (tags), supply-chain path.</li>
-  <li><strong>Doc</strong>: each row carries its own document — the certification paperwork behind the tags above.</li>
-  <li><strong>Views</strong>: a table view for the sustainability team, a timeline view to track certification renewal dates.</li>
-</ul>
-
-<a class="cta" href="{{ '/' | relative_url }}">← Back to Tappi</a>

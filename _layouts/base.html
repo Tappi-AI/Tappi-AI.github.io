@@ -1,33 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ page.lang | default: 'en' }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1a2b45">
   <link rel="icon" href="{{ '/favicon.ico' | relative_url }}">
   <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+  {%- if page.extra_css %}
+  <link rel="stylesheet" href="{{ '/assets/css/' | append: page.extra_css | append: '.css' | relative_url }}">
+  {%- endif %}
   {% seo %}
 </head>
 <body>
-  <header class="site-header">
-    <div class="wrap">
-      <a class="brand" href="{{ '/' | relative_url }}">Tappi<span>.ai</span></a>
-      <nav>
-        <a href="{{ '/' | relative_url }}">Home</a>
-        <a href="{{ '/about/' | relative_url }}">About</a>
-        <a href="{{ '/esg-demo/' | relative_url }}">ESG Demo</a>
-      </nav>
-    </div>
-  </header>
 
-  <main class="wrap">
-    {{ content }}
-  </main>
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="{{ '/' | relative_url }}">Tappi</a>
+    <nav>
+      {%- assign p = page.url %}
+      <a href="{{ '/' | relative_url }}"{% if p == '/' %} aria-current="page"{% endif %}>Home</a>
+      <a href="{{ '/about/' | relative_url }}"{% if p contains '/about/' %} aria-current="page"{% endif %}>About</a>
+      <a href="{{ '/esg-demo/' | relative_url }}"{% if p contains '/esg-demo/' %} aria-current="page"{% endif %}>ESG Demo</a>
+    </nav>
+  </div>
+</header>
 
-  <footer class="site-footer">
-    <div class="wrap">
-      <span>&copy; {{ 'now' | date: "%Y" }} Tappi</span>
-      <a href="https://github.com/Tappi-AI" target="_blank" rel="noopener">GitHub</a>
-    </div>
-  </footer>
+{{ content }}
+
+<footer class="site-footer">
+  <div class="bar">
+    <span class="tappi">Tappi</span>
+    <span>&copy; {{ 'now' | date: "%Y" }} · Demo site — sample data throughout</span>
+    <a href="https://github.com/Tappi-AI" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</footer>
+
 </body>
 </html>

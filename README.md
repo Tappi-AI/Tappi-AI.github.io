@@ -8,17 +8,11 @@ case in the sibling `esg-tappi` repo.
 ## Local development
 
 ```bash
-docker compose up site
+bundle install
+bundle exec jekyll serve --livereload --host 127.0.0.1 --port 14001
 ```
 
 Site runs at http://localhost:14001 with livereload.
-
-Without Docker, if you have Ruby + Bundler installed:
-
-```bash
-bundle install
-bundle exec jekyll serve
-```
 
 ## Structure
 
@@ -30,11 +24,12 @@ _data/esg_products.yml # Demo product data rendered on /esg-demo/
 index.md               # Home
 about/index.md          # About
 esg-demo/index.md       # ESG Goods Journey demo
-Dockerfile, Gemfile     # Jekyll build environment
+Gemfile                 # Jekyll dependencies
 ```
 
 ## Deployment
 
 Auto-deploys to GitHub Pages on push to `main` via
-`.github/workflows/jekyll.yml`, which builds this repo with the `Dockerfile`
-above and publishes `_site/`. Custom domain is set via `CNAME`.
+`.github/workflows/jekyll.yml`, which installs the Gemfile dependencies, runs
+`bundle exec jekyll build`, and publishes `_site/`. Custom domain is set via
+`CNAME`.

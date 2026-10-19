@@ -16,7 +16,8 @@ self-contained in `_layouts/base.html` and `assets/css/main.css`.
 ## Local development
 
 ```bash
-docker compose up site
+bundle install
+bundle exec jekyll serve --livereload --host 127.0.0.1 --port 14001
 ```
 
 Site runs at http://localhost:14001 with livereload.
@@ -31,4 +32,4 @@ maintaining a bespoke `browser/` service here.
 
 - GitHub Pages at: https://tappi-ai.github.io (custom domain: https://tappi.ai, via `CNAME`)
 - Repo: Tappi-AI/Tappi-AI.github.io
-- Auto-deploys on push to main via `.github/workflows/jekyll.yml`, which builds this repo's `Dockerfile` and publishes `_site/`.
+- Auto-deploys on push to main via `.github/workflows/jekyll.yml`, which runs `bundle exec jekyll build` and publishes `_site/`.

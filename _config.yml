@@ -5,6 +5,8 @@ description: >-
   ESG supply-chain traceability use case.
 
 url: "https://tappi.ai"
+include:
+  - .well-known
 baseurl: ""
 repository: Tappi-AI/Tappi-AI.github.io
 

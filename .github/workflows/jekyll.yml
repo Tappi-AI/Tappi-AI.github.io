@@ -22,6 +22,7 @@ jobs:
         uses: actions/upload-pages-artifact@main
         with:
           path: _site
+          include-hidden-files: true
   deploy:
     runs-on: ubuntu-latest
     needs: build

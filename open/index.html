@@ -1,0 +1,41 @@
+---
+layout: null
+permalink: /open/
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1a2b45">
+  <title>Opening Tappi</title>
+  <style>
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #f4f7fb; color: #1a2b45; font-family: system-ui, sans-serif; }
+    main { max-width: 28rem; padding: 2rem; text-align: center; }
+    a { color: #1565c0; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Opening Tappi…</h1>
+    <p id="message">Handing this link to the Tappi app.</p>
+    <p><a id="open-app" hidden>Open Tappi</a></p>
+  </main>
+  <script>
+    (() => {
+      const targets = new Set(['wellbeing', 'sleep', 'spin-to-win', 'journey', 'daily-moment']);
+      const target = new URL(window.location.href).searchParams.get('target');
+      const message = document.getElementById('message');
+      const link = document.getElementById('open-app');
+      if (!targets.has(target)) {
+        message.textContent = 'This is not a recognised Tappi app link.';
+        return;
+      }
+      const appUrl = `tappi://open?target=${encodeURIComponent(target)}`;
+      link.href = appUrl;
+      link.hidden = false;
+      window.location.replace(appUrl);
+    })();
+  </script>
+</body>
+</html>

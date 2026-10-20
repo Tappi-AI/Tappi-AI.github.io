@@ -25,3 +25,8 @@ exclude:
   - node_modules
   - .claude
   - .tmp
+  - .git
+
+# Android Digital Asset Links must be published at this exact hidden path.
+include:
+  - .well-known

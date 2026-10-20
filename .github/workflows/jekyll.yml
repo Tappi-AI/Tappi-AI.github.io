@@ -27,6 +27,8 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./_site
+          # Android requires this exact hidden-directory URL for App Links.
+          include-hidden-files: true
   deploy:
     runs-on: ubuntu-latest
     needs: build
